@@ -1,5 +1,6 @@
 const express = require("express");
-const router = express.Router();
+require("dotenv").config();
+const mysql = require("mysql2");
 const cors = require("cors");
 const app = express();
 const port = 3000;
@@ -8,6 +9,23 @@ const sessionRouter = require(__dirname + "/routes/session.js");
 const characterRouter = require(__dirname + "/routes/character.js");
 
 app.use(cors());
+
+// establish mysql connection
+const connection = mysql.createConnection({
+	host: process.env.DB_HOST,
+	port: process.env.DB_PORT,
+	user: process.env.DB_USER,
+	password: process.env.DB_PASS,
+	database: process.env.DB_NAME,
+});
+
+connection.query("SELECT 1 + 1 AS solution", (err, results) => {
+	if (err) {
+		console.error(err);
+		return;
+	}
+	console.log(`The answer is ${results[0].solution}`);
+});
 
 // establish routes
 app.use("/api/user", userRouter);
