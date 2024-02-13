@@ -9,22 +9,25 @@ const sessionRouter = require(__dirname + "/routes/session.js");
 const characterRouter = require(__dirname + "/routes/character.js");
 
 app.use(cors());
+app.use(express.json());
 
 // establish mysql connection
-const connection = mysql.createConnection({
-	host: process.env.DB_HOST,
-	port: process.env.DB_PORT,
-	user: process.env.DB_USER,
-	password: process.env.DB_PASS,
-	database: process.env.DB_NAME,
+const connectDB = require("./mysql.js");
+
+connectDB.connect((err) => {
+	if (err) {
+		console.error("Error connecting to mySQL");
+		return;
+	}
+	console.log("Connected to mySQL");
 });
 
-connection.query("SELECT 1 + 1 AS solution", (err, results) => {
+connectDB.query("SHOW tables", (err, results) => {
 	if (err) {
 		console.error(err);
 		return;
 	}
-	console.log(`The answer is ${results[0].solution}`);
+	console.log(`The answer is ${JSON.stringify(results)}`);
 });
 
 // establish routes
